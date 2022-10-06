@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NZWalksAPI.Models.DTO;
 using NZWalksAPI.Repositories;
 
 namespace NZWalksAPI.Controllers
@@ -69,6 +70,12 @@ namespace NZWalksAPI.Controllers
 
         public async Task<IActionResult> AddWalkDifficultyAsync([FromBody] Models.DTO.UpdateWalkDifficulty walkDifficulty)
         {
+
+            if (!(ValidateAddWalkDifficultyAsync(walkDifficulty)))
+            {
+                return BadRequest(ModelState);
+            }
+
             var walkDifficultyDomain = new Models.Domain.WalkDifficulty
             {
                 Code = walkDifficulty.Code
@@ -90,6 +97,12 @@ namespace NZWalksAPI.Controllers
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdateWalkDifficultyAsync([FromRoute] Guid id, [FromBody] Models.DTO.UpdateWalkDifficulty walkDifficulty)
         {
+
+            if (!(ValidateUpdateWalkDifficultyAsync(walkDifficulty)))
+            {
+                return BadRequest(ModelState);
+            }
+
             var walkDifficultyDomain = new Models.Domain.WalkDifficulty
             {
                 Id = id,
@@ -131,5 +144,54 @@ namespace NZWalksAPI.Controllers
 
             return Ok(walkDifficultyDTO);
         }
+
+        #region Private Methods
+
+        private bool ValidateAddWalkDifficultyAsync(Models.DTO.UpdateWalkDifficulty walkDifficulty)
+        {
+            if (walkDifficulty == null)
+            {
+                ModelState.AddModelError(nameof(walkDifficulty),
+                    $"Add Region Data is required.");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(walkDifficulty.Code))
+            {
+                ModelState.AddModelError(nameof(walkDifficulty.Code),
+                    $"{nameof(walkDifficulty.Code)} cannot be null or empty or whitespace.");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ValidateUpdateWalkDifficultyAsync(Models.DTO.UpdateWalkDifficulty updateWalkDifficulty)
+        {
+            if (updateWalkDifficulty == null)
+            {
+                ModelState.AddModelError(nameof(updateWalkDifficulty),
+                    $"Add Region Data is required.");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(updateWalkDifficulty.Code))
+            {
+                ModelState.AddModelError(nameof(updateWalkDifficulty.Code),
+                    $"{nameof(updateWalkDifficulty.Code)} cannot be null or empty or whitespace.");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        #endregion
     }
 }
