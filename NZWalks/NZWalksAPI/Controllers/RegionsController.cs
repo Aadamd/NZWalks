@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NZWalksAPI.Models.Domain;
 using NZWalksAPI.Models.DTO;
@@ -24,6 +25,7 @@ namespace NZWalksAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "reader")]
         public async Task<IActionResult> GetAllRegions()
         {
             var regions = await regionRepository.GetAllAsync();
@@ -55,6 +57,7 @@ namespace NZWalksAPI.Controllers
         [HttpGet]
         [Route("{id:guid}")]
         [ActionName("GetRegionAsync")]
+        [Authorize(Roles = "reader")]
         public async Task<IActionResult> GetRegionAsync(Guid id)
         {
             var region = await regionRepository.GetAsync(id);
@@ -70,6 +73,7 @@ namespace NZWalksAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> AddRegionAsync(AddRegionRequest addRegionRequest)
         {
             //Validate the request
@@ -111,6 +115,7 @@ namespace NZWalksAPI.Controllers
 
         [HttpDelete]
         [Route("{id:guid}")]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> DeleteRegionAsync(Guid id)
         {
             //get region from database
@@ -141,6 +146,7 @@ namespace NZWalksAPI.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> UpdateRegionAsync([FromRoute] Guid id, [FromBody] Models.DTO.UpdateRegionRequest updateRegionRequest)
         {
 
@@ -191,12 +197,12 @@ namespace NZWalksAPI.Controllers
 
         private bool ValidateAddRegionAsync(Models.DTO.AddRegionRequest addRegionRequest)
         {
-            if (addRegionRequest == null)
-            {
-                ModelState.AddModelError(nameof(addRegionRequest),
-                    $"Add Region Data is required.");
-                return false;
-            }
+            //if (addRegionRequest == null)
+            //{
+            //    ModelState.AddModelError(nameof(addRegionRequest),
+            //        $"Add Region Data is required.");
+            //    return false;
+            //}
 
             if (string.IsNullOrWhiteSpace(addRegionRequest.Code))
             {

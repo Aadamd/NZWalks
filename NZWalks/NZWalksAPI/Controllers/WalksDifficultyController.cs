@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NZWalksAPI.Models.DTO;
 using NZWalksAPI.Repositories;
@@ -23,7 +25,7 @@ namespace NZWalksAPI.Controllers
         }
 
         [HttpGet]
-
+        [Authorize(Roles = "reader")]
         public async Task<IActionResult> GetAllWalkDifficultyAsync()
         {
             var walkDifficulty = await walkDifficultyRepository.GetAllAsync();
@@ -47,7 +49,7 @@ namespace NZWalksAPI.Controllers
         [HttpGet]
         [Route("{id:guid}")]
         [ActionName("GetWalkDifficultyAsync")]
-
+        [Authorize(Roles = "reader")]
         public async Task<IActionResult> GetWalkDifficultyAsync(Guid id)
         {
             var walkDifficulty = await walkDifficultyRepository.GetAsync(id);
@@ -67,7 +69,7 @@ namespace NZWalksAPI.Controllers
         }
 
         [HttpPost]
-
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> AddWalkDifficultyAsync([FromBody] Models.DTO.UpdateWalkDifficulty walkDifficulty)
         {
 
@@ -95,6 +97,7 @@ namespace NZWalksAPI.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> UpdateWalkDifficultyAsync([FromRoute] Guid id, [FromBody] Models.DTO.UpdateWalkDifficulty walkDifficulty)
         {
 
@@ -127,6 +130,7 @@ namespace NZWalksAPI.Controllers
 
         [HttpDelete]
         [Route("{id:guid}")]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> DeleteWalkDifficultyAsync([FromRoute]Guid id)
         {
             var walkDifficulty = await walkDifficultyRepository.DeleteAsync(id);

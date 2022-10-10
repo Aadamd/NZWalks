@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NZWalksAPI.Models.DTO;
 using NZWalksAPI.Repositories;
@@ -28,6 +30,7 @@ namespace NZWalksAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "reader")]
         public async Task<IActionResult> GetAllWalksAsync()
         {
             
@@ -45,6 +48,7 @@ namespace NZWalksAPI.Controllers
         [HttpGet]
         [Route("{id:guid}")]
         [ActionName("GetWalkAsync")]
+        [Authorize(Roles = "reader")]
         public async Task<IActionResult> GetWalkAsync(Guid id)
         {
             var walkDomain = await walkRepository.GetAsync(id);
@@ -55,6 +59,7 @@ namespace NZWalksAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> AddWalkAsync([FromBody] Models.DTO.AddWalkRequest addWalkRequest)
         {
 
@@ -87,7 +92,7 @@ namespace NZWalksAPI.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
-
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> UpdateWalkAsync([FromRoute] Guid id, [FromBody] Models.DTO.UpdateWalkRequest updateWalkRequest)
         {
 
@@ -124,7 +129,7 @@ namespace NZWalksAPI.Controllers
 
         [HttpDelete]
         [Route("{id:guid}")]
-
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> DeleteWalkAsync([FromRoute] Guid id)
         {
             var walk = await walkRepository.DeleteAsync(id);
